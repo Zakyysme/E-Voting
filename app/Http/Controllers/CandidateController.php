@@ -7,7 +7,7 @@ use App\Models\Candidate;
 use App\Models\Election; // Jangan lupa import model Election
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Services\AuditLogger;
+use Illuminate\Validation\Rule;
 
 class CandidateController extends Controller
 {
@@ -37,9 +37,18 @@ class CandidateController extends Controller
         $request->validate([
             // PERBAIKAN: Tambahkan validasi election_id
             'election_id' => 'required|exists:elections,id',
-            'name'        => 'required|string|max:255',
+            'nomor_urut'  => [
+                'required', 
+                'integer', 
+                Rule::unique('candidates')->where(function ($query) use ($request) {
+                    return $query->where('election_id', $request->election_id);
+                })
+            ],
+            'name'        => 'required|string|max:255', // Nama Ketua
+        'vice_name'   => 'nullable|string|max:255', // Nama Wakil
             'description' => 'nullable|string',
             'photo'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'vice_photo'  => 'nullable|image|max:2048', // Foto Wakil
         ]);
 
         $data = $request->all();
@@ -49,6 +58,11 @@ class CandidateController extends Controller
             $path = $request->file('photo')->store('candidates', 'public');
             $data['photo_url'] = $path;
         }
+
+        // 2. Upload Foto Wakil
+    if ($request->hasFile('vice_photo')) {
+        $data['vice_photo'] = $request->file('vice_photo')->store('candidates', 'public');
+    }
 
         Candidate::create($data);
 
@@ -69,9 +83,18 @@ class CandidateController extends Controller
     {
         $request->validate([
             'election_id' => 'sometimes|exists:elections,id', // Tambahan validasi
-            'name'        => 'required|string',
+            'nomor_urut'  => [
+                'required', 
+                'integer', 
+                Rule::unique('candidates')->ignore($candidate->id)->where(function ($query) use ($request) {
+                    return $query->where('election_id', $request->election_id);
+                })
+            ],
+            'name'        => 'required|string|max:255', // Nama Ketua
+        'vice_name'   => 'nullable|string|max:255', // Nama Wakil
             'description' => 'nullable|string',
             'photo'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'vice_photo'  => 'nullable|image|max:2048', // Foto Wakil
         ]);
 
         $data = $request->all();
@@ -84,9 +107,24 @@ class CandidateController extends Controller
             $data['photo_url'] = $path;
         }
 
+        if ($request->hasFile('vice_photo')) {
+            if ($candidate->vice_photo) {
+                Storage::disk('public')->delete($candidate->vice_photo);
+            }
+        $data['vice_photo'] = $request->file('vice_photo')->store('candidates', 'public');
+    }
+
         $candidate->update($data);
 
         return redirect()->route('admin.candidates.index')->with('success', 'Data kandidat diperbarui!');
+    }
+
+    // Lihat Detail
+    public function show(Candidate $candidate)
+    {
+        // Load relasi election agar kita tahu dia kandidat untuk pemilihan apa
+        $candidate->load('election');
+        return view('admin.pages.candidates.show', compact('candidate'));
     }
 
     // Hapus data
@@ -94,6 +132,9 @@ class CandidateController extends Controller
     {
         if ($candidate->photo_url) {
             Storage::disk('public')->delete($candidate->photo_url);
+        }
+        if ($candidate->vice_photo) {
+            Storage::disk('public')->delete($candidate->vice_photo);
         }
         
         $candidate->delete();

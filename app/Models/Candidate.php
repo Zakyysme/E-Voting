@@ -11,7 +11,10 @@ class Candidate extends Model
 
     protected $fillable = [
         'election_id',
-        'name',
+        'nomor_urut',
+        'name',      // Ini kita anggap Nama Ketua
+    'vice_name', // Ini Nama Wakil
+    'vice_photo',// Foto Wakil
         'description',
         'photo_url'
     ];

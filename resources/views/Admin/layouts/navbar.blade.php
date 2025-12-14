@@ -3,7 +3,7 @@
         
         {{-- Tombol Toggle Menu --}}
         <div class="btn-toggle-menu" style="cursor: pointer;">
-            <span class="material-symbols-outlined">menu</span>
+            <i data-feather="menu"></i>
         </div>
 
         {{-- Search Bar (Desktop) --}}
@@ -18,7 +18,7 @@
                     placeholder="Cari data..."
                     aria-label="Search"
                 >
-                <span class="material-symbols-outlined position-absolute ms-3 translate-middle-y start-0 top-50">search</span>
+                <span class=" position-absolute ms-3 translate-middle-y start-0 top-50"><i data-feather="search"></i></span>
             </form>
         </div>
 

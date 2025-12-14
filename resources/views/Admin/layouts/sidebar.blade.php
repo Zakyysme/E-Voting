@@ -19,9 +19,7 @@
             {{-- Menyala hanya jika di halaman dashboard --}}
             <li class="{{ request()->routeIs('admin.dashboard') ? 'mm-active' : '' }}">
                 <a href="{{ route('admin.dashboard') }}">
-                    <div class="parent-icon">
-                        <span class="material-symbols-outlined">dashboard</span>
-                    </div>
+                    <i data-feather="sliders"></i>
                     <div class="menu-title">Dashboard</div>
                 </a>
             </li>
@@ -32,30 +30,31 @@
             {{-- Menyala jika user membuka halaman Election, Candidate, atau Voter --}}
             <li class="{{ request()->routeIs('admin.elections.*', 'admin.candidates.*', 'admin.voters.*') ? 'mm-active' : '' }}">
                 <a href="javascript:;" class="has-arrow">
-                    <div class="parent-icon">
-                        <span class="material-symbols-outlined">database</span>
-                    </div>
+                    <i data-feather="database"></i>
                     <div class="menu-title">Data Master</div>
                 </a>
                 <ul>
                     {{-- Data Election --}}
                     <li class="{{ request()->routeIs('admin.elections.*') ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.elections.index') }}">
-                            <span class="material-symbols-outlined">arrow_right</span>Data Election
+                            <i data-feather="edit"></i>
+                            <div class="menu-title">Data Election</div>
                         </a>
                     </li>
                     
                     {{-- Data Kandidat --}}
                     <li class="{{ request()->routeIs('admin.candidates.*') ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.candidates.index') }}">
-                            <span class="material-symbols-outlined">arrow_right</span>Data Kandidat
+                            <i data-feather="user"></i>
+                            <div class="menu-title">Data Kandidat</div>
                         </a>
                     </li>
                     
                     {{-- Data Pemilih (DPT) --}}
                     <li class="{{ request()->routeIs('admin.voters.*') ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.voters.index') }}">
-                            <span class="material-symbols-outlined">arrow_right</span>Daftar Pemilih (DPT)
+                            <i data-feather="users"></i>
+                            <div class="menu-title">Daftar Pemilih (DPT)</div>
                         </a>
                     </li>
                 </ul>
@@ -67,16 +66,15 @@
             {{-- Menyala jika user membuka halaman Real Count atau Audit Log --}}
             <li class="{{ request()->routeIs('admin.votes.*', 'admin.audit_logs.*') ? 'mm-active' : '' }}">
                 <a href="javascript:;" class="has-arrow">
-                    <div class="parent-icon">
-                        <span class="material-symbols-outlined">how_to_vote</span>
-                    </div>
+                    <i data-feather="archive"></i>
                     <div class="menu-title">Hasil</div>
                 </a>
                 <ul>
                     {{-- Real Count (Grafik) --}}
                     <li class="{{ request()->routeIs('admin.votes.*') ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.votes.index') }}">
-                            <span class="material-symbols-outlined">arrow_right</span>Real Count
+                            <i data-feather="inbox"></i>
+                            <div class="menu-title">Real Count</div>
                         </a>
                     </li>
                 </ul>
@@ -84,9 +82,7 @@
 
              <li>
                 <a href="#">
-                    <div class="parent-icon">
-                        <span class="material-symbols-outlined">settings</span>
-                    </div>
+                    <i data-feather="settings"></i>
                     <div class="menu-title">Pengaturan Bilik</div>
                 </a>
             </li>
@@ -94,9 +90,7 @@
             {{-- 4. LOGOUT (Menu Utama) --}}
             <li>
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <div class="parent-icon">
-                        <span class="material-symbols-outlined">logout</span>
-                    </div>
+                    <i data-feather="log-out"></i>
                     <div class="menu-title">Keluar</div>
                 </a>
                 {{-- Form Logout Tersembunyi --}}

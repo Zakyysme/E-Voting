@@ -25,6 +25,9 @@
     </div>
 
     @stack('scripts')
+    <script>
+      feather.replace();
+    </script>
 </body>
 
 </html>

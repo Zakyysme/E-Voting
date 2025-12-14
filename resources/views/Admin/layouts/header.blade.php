@@ -24,5 +24,6 @@
 <link href="{{ asset('assets/css/semi-dark-theme.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/css/minimal-theme.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/css/shadow-theme.css') }}" rel="stylesheet">
+<script src="https://unpkg.com/feather-icons"></script>
 
 @stack('styles')
