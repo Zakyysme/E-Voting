@@ -81,7 +81,7 @@
             </li>
 
              <li>
-                <a href="#">
+                <a href="{{ route('admin.booths.index') }}">
                     <i data-feather="settings"></i>
                     <div class="menu-title">Pengaturan Bilik</div>
                 </a>

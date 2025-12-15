@@ -23,8 +23,8 @@
                         <div class="card-body">
                             <div class="d-flex flex-column align-items-center text-center">
                                 {{-- Menampilkan Foto atau Default Avatar --}}
-                                <img src="{{ $user->photo ? asset('storage/photos/'.$user->photo) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=0D8ABC&color=fff' }}" 
-                                     alt="Admin" class="rounded-circle p-1 bg-primary" width="110" height="110">
+                                <img src="{{ $user->foto ? asset('storage/photos/'.$user->foto) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=0D8ABC&color=fff' }}" 
+                                     alt="Admin" class="rounded-circle p-1 bg-primary" width="110" height="110" style="object-fit: cover;">
                                 
                                 <div class="mt-3">
                                     <h4>{{ $user->name }}</h4>
@@ -109,7 +109,7 @@
                                         <div class="row mb-3">
                                             <div class="col-sm-3"><h6 class="mb-0">Foto Profil</h6></div>
                                             <div class="col-sm-9 text-secondary">
-                                                <input type="file" name="photo" class="form-control">
+                                                <input type="file" name="foto" class="form-control">
                                                 <small class="text-muted">Format: jpg, png. Max: 2MB</small>
                                             </div>
                                         </div>

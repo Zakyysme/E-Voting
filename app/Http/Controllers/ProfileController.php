@@ -30,21 +30,24 @@ class ProfileController extends Controller
             'name'  => 'required|string|max:255',
             // Perbaikan syntax unique agar lebih aman
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
         ]);
 
         // Logic Upload Foto
-        if ($request->hasFile('photo')) {
-            // Hapus foto lama jika ada
-            if ($user->photo && Storage::exists('public/photos/' . $user->photo)) {
-                Storage::delete('public/photos/' . $user->photo);
-            }
-            
-            // Simpan foto baru
-            $filename = time() . '.' . $request->photo->extension();
-            $request->photo->storeAs('public/photos', $filename);
-            $user->photo = $filename;
-        }
+        if ($request->hasFile('foto')) {
+    // 1. Hapus foto lama (Gunakan disk 'public')
+    if ($user->foto && Storage::disk('public')->exists('photos/' . $user->foto)) {
+        Storage::disk('public')->delete('photos/' . $user->foto);
+    }
+    
+    // 2. Simpan foto baru
+    // Parameter ke-3 'public' memastikan file masuk ke storage/app/public/photos
+    $filename = time() . '.' . $request->file('foto')->extension();
+    $request->file('foto')->storeAs('photos', $filename, 'public'); 
+
+    // Simpan HANYA nama filenya ke database
+    $user->foto = $filename;
+}
 
         $user->name = $request->name;
         $user->email = $request->email;

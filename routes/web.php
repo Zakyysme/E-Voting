@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisterController;
 
 // Import Controller Admin
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\BoothController;
 use App\Http\Controllers\ElectionController;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\VoterController;
@@ -76,6 +77,21 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/votes', [VoteController::class, 'index'])->name('votes.index');
     // URL: /admin/votes/{election} (Detail grafik per pemilihan)
     Route::get('/votes/{election}', [VoteController::class, 'show'])->name('votes.show');
+
+    // 1. Menampilkan halaman daftar bilik
+    Route::get('/booths', [BoothController::class, 'index'])->name('booths.index');
+
+    // 2. Menyimpan bilik baru
+    Route::post('/booths', [BoothController::class, 'store'])->name('booths.store');
+
+    // 3. Menghapus bilik
+    Route::delete('/booths/{booth}', [BoothController::class, 'destroy'])->name('booths.destroy');
+
+    // 4. Reset Kode Akses (Acak Ulang)
+    Route::patch('/booths/{id}/reset', [BoothController::class, 'resetCode'])->name('booths.reset');
+
+    // 5. Ganti Status (Aktif/Nonaktif)
+    Route::patch('/booths/{id}/toggle', [BoothController::class, 'toggleStatus'])->name('booths.toggle');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
