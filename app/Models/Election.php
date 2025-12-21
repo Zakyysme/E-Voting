@@ -15,7 +15,8 @@ class Election extends Model
         'start_at',
         'end_at',
         'status',
-        'created_by'
+        'created_by',
+        'logo'
     ];
 
     protected $dates = ['start_at', 'end_at'];

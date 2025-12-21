@@ -10,10 +10,14 @@
             <h4 class="mb-0">Edit Agenda Pemilihan</h4>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.elections.update', $election->id) }}" method="POST">
+            <form action="{{ route('admin.elections.update', $election->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 
+                <div class="mb-3">
+                    <label class="form-label">Logo</label>
+                    <input type="file" name="logo" class="form-control" accept="image/*">
+                </div>
                 <div class="mb-3">
                     <label class="form-label">Judul Pemilihan</label>
                     <input type="text" name="title" class="form-control" value="{{ $election->title }}" required>

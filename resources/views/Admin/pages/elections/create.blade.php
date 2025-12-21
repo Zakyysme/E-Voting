@@ -10,9 +10,12 @@
             <h4 class="mb-0">Buat Agenda Pemilihan Baru</h4>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.elections.store') }}" method="POST">
+            <form action="{{ route('admin.elections.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                
+                <div class="mb-3">
+                    <label class="form-label">Logo</label>
+                    <input type="file" name="logo" class="form-control" accept="image/*">
+                </div>
                 <div class="mb-3">
                     <label class="form-label">Judul Pemilihan</label>
                     <input type="text" name="title" class="form-control" placeholder="Contoh: Pemilihan Ketua OSIS 2025" required>

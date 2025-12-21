@@ -27,12 +27,17 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password), // Enkripsi password sebelum disimpan
+            'role' => 'voter',
         ]);
 
         // 3. Login Otomatis setelah Registrasi
         Auth::login($user);
 
         // 4. Redirect ke Halaman Utama
-        return redirect()->route('admin.dashboard')->with('success', 'Pendaftaran Berhasil!');
+        if ($user->role === 'admin'){
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->route('index')->with('success', 'Pendaftaran Berhasil!');
     } 
 }

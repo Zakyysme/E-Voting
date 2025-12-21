@@ -7,6 +7,8 @@ use App\Models\Election;
 use Illuminate\Http\Request;
 use App\Models\AuditLog;
 use App\Services\AuditLogger;
+use Illuminate\Support\Facades\Storage;
+
 
 class ElectionController extends Controller
 {
@@ -26,21 +28,27 @@ class ElectionController extends Controller
     // Simpan Data
     public function store(Request $request)
 {
-    $request->validate([
+    $validated = $request->validate([
         'title'       => 'required|string|max:255',
         'description' => 'nullable|string',
         'start_at'    => 'required|date',
         'end_at'      => 'required|date|after:start_at',
+        'logo'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
     ]);
 
-    $election = Election::create([
-            'title'       => $request->title,
-            'description' => $request->description,
-            'start_at'    => $request->start_at,
-            'end_at'      => $request->end_at,
-            'created_by'  => $request->user()->id, 
-            'status'      => 'draft',
-        ]);
+    // Simpan semua input ke dalam array $data
+    $data = $request->all();
+    $data['created_by'] = $request->user()->id;
+    $data['status'] = 'draft';
+
+    // Cek jika ada file logo
+    if ($request->hasFile('logo')) {
+        $path = $request->file('logo')->store('elections', 'public');
+        $data['logo'] = $path; // Masukkan path ke array $data
+    }
+
+    // Gunakan $data untuk create
+    Election::create($data);
 
     return redirect()->route('admin.elections.index')
         ->with('success', 'Agenda Pemilihan berhasil dibuat!');
@@ -62,24 +70,42 @@ class ElectionController extends Controller
 
     // Update Data
     public function update(Request $request, Election $election)
-    {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'start_at'    => 'required|date',
-            'end_at'      => 'required|date',
-            'status'      => 'required|in:draft,running,finished'
-        ]);
+{
+    $validated = $request->validate([
+        'title'       => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'start_at'    => 'required|date',
+        'end_at'      => 'required|date',
+        'status'      => 'required|in:draft,running,finished',
+        'logo'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-        $election->update($request->all());
+    // Ambil semua input teks
+    $data = $request->all();
 
-        return redirect()->route('admin.elections.index')
-            ->with('success', 'Data pemilihan diperbarui!');
+    if ($request->hasFile('logo')) {
+        // Hapus logo lama jika ada
+        if ($election->logo) {
+            Storage::disk('public')->delete($election->logo);
+        }
+        // Simpan logo baru
+        $path = $request->file('logo')->store('elections', 'public');
+        $data['logo'] = $path;
     }
+
+    // Update semua data (teks + logo baru jika ada)
+    $election->update($data);
+
+    return redirect()->route('admin.elections.index')
+        ->with('success', 'Data pemilihan diperbarui!');
+}
 
     // Hapus Data
     public function destroy(Election $election)
     {
+        if ($election->logo) {
+            Storage::disk('public')->delete($election->logo);
+        }
         $election->delete();
         return redirect()->route('admin.elections.index')
             ->with('success', 'Data pemilihan dihapus.');

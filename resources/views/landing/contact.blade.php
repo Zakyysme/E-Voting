@@ -1,0 +1,132 @@
+@extends('landing.layouts.app')
+
+@section('content')
+<!--======  Start Page Hero Section  ======-->
+<section class="bizzen-hero_one bg_cover" style="
+              background-image: url(landing/images/home-one/hero/hero-bg.jpg);
+            ">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="page-content text-center">
+          <h1 style="color: white">Hubungi Kami</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--======  End Page Hero Section  ======-->
+<!--======  Start Contact Info Section  ======-->
+<section class="bizzen-contact-info-sec pt-105">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <!--=== Section Title ===-->
+        <div class="section-title text-center mb-50">
+          <h2>Our Contact Information</h2>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-xl-4 col-md-6 col-sm-12">
+        <!--=== Bizzen Info Box ===-->
+        <div class="bizzen-info-left-box mb-40">
+          <div class="icon">
+            <i class="far fa-map-marker-alt"></i>
+          </div>
+          <div class="content">
+            <h5>Our Address</h5>
+            <p>374 William S Canning Blvd, Fall River MA 2721, USA</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4 col-md-6 col-sm-12">
+        <!--=== Bizzen Info Box ===-->
+        <div class="bizzen-info-left-box mb-40">
+          <div class="icon">
+            <i class="far fa-phone-alt"></i>
+          </div>
+          <div class="content">
+            <h5>Contact Number</h5>
+            <p>
+              <span>Mobile:
+                <a href="tel:+13217322978">+13217322978</a></span>
+            </p>
+            <p>
+              <span>Email: <a href="mailto:">saorhelp@gmail.com</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4 col-md-6 col-sm-12">
+        <!--=== Bizzen Info Box ===-->
+        <div class="bizzen-info-left-box mb-40">
+          <div class="icon">
+            <i class="far fa-clock"></i>
+          </div>
+          <div class="content">
+            <h5>Our Address</h5>
+            <p>Mon - Sat: 9:00 - 18:00</p>
+            <p>Sunday: Closed</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--======  End Contact Info Section  ======-->
+<!--======  Start Contact Section  ======-->
+<section class="bizzen-contact_two pt-80 pb-120">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-6 col-lg-10">
+        <!--=== Map Box ===-->
+        <div class="map-box mb-5 mb-xl-0" data-aos="fade-up" data-aos-duration="1300">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d96777.16150026117!2d-74.00840582560909!3d40.71171357405996!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1706508986625!5m2!1sen!2sbd"
+            loading="lazy"></iframe>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-10">
+        <!--=== Contact Wrapper ===-->
+        <div class="contact-wrapper" data-aos="fade-left" data-aos-duration="1400">
+          <h2>Get In Touch</h2>
+          <form id="contact-form" class="contact-form" action="contact.php" method="POST">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <input type="text" class="form_control" placeholder="Your Name" name="name" required />
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <input type="email" class="form_control" placeholder="Email Address" name="email" required />
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <input type="text" class="form_control" placeholder="Phone Number" name="phone" required />
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <textarea class="form_control" placeholder="Message" name="message" rows="5"
+                    cols="8"></textarea>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <button class="theme-btn style-one">
+                    Send Message Us <i class="far fa-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--======  End Contact Section  ======-->
+@endsection

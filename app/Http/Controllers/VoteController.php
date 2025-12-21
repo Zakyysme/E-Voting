@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class VoteController extends Controller
 {
@@ -22,7 +23,7 @@ class VoteController extends Controller
     {
         // Eager load candidates beserta jumlah vote-nya
         // Asumsi: Anda punya relasi 'votes' di model Candidate (hasMany Vote)
-        $election->load(['candidates' => function($query) {
+        $election->load(['candidates' => function ($query) {
             $query->withCount('votes'); // Menghasilkan property 'votes_count'
         }]);
 
@@ -35,58 +36,75 @@ class VoteController extends Controller
 
         return view('admin.pages.votes.show', compact('election', 'totalVotes', 'chartLabels', 'chartData'));
     }
-    public function cast(Request $request, Election $election)
+    public function store(Request $request, $electionId)
     {
+        // 1. Validasi Input
         $request->validate([
-            'candidate_id' => 'required|exists:candidates,id'
+            'candidate_id' => 'required|exists:candidates,id',
         ]);
 
-        $candidate = $election->candidates()->find($request->candidate_id);
+        $user = Auth::user();
 
-        if (!$candidate) {
-            return response()->json(['message' => 'Invalid candidate'], 422);
+        // 2. Cek Double Voting (Satu User Satu Suara per Pemilihan)
+        // Kita cek apakah user_id dan election_id ini sudah ada di tabel votes
+        $hasVoted = Vote::where('user_id', $user->id)
+                        ->where('election_id', $electionId)
+                        ->exists();
+
+        if ($hasVoted) {
+            return redirect()->back()->with('error', 'Anda sudah menggunakan hak pilih pada pemilihan ini.');
         }
 
-        $now = now();
-        if (!($election->start_at <= $now && $now <= $election->end_at)) {
-            return response()->json(['message' => 'Voting not active'], 422);
-        }
-
+        // 3. Proses Transaksi Database
         try {
-            $vote = DB::transaction(function () use ($request, $candidate, $election) {
+            DB::beginTransaction();
 
-                $receipt = hash('sha256',
-                    $request->user()->id . '|' .
-                    $candidate->id . '|' .
-                    Str::random(40) . '|' .
-                    now()
-                );
+            // Membuat Receipt Hash Unik (SHA256)
+            // Menggabungkan ID User + ID Election + Timestamp saat ini
+            $rawString = $user->id . '-' . $electionId . '-' . $request->candidate_id . '-' . time();
+            $receiptHash = hash('sha256', $rawString);
 
-                return Vote::create([
-                    'user_id'      => $request->user()->id,
-                    'election_id'  => $election->id,
-                    'candidate_id' => $candidate->id,
-                    'receipt_hash' => $receipt,
-                    'casted_at'    => now()
-                ]);
-            });
+            // Simpan ke Database sesuai Model Anda
+            Vote::create([
+                'user_id'      => $user->id,
+                'election_id'  => $electionId,
+                'candidate_id' => $request->candidate_id,
+                'receipt_hash' => $receiptHash,
+                'casted_at'    => now(), // Mengisi kolom casted_at sesuai model Anda
+            ]);
 
-            return response()->json([
-                'message' => 'Vote submitted',
-                'receipt' => $vote->receipt_hash
-            ], 201);
+            DB::commit();
 
-        } catch (QueryException $e) {
-            return response()->json([
-                'message' => 'You already voted in this election'
-            ], 409);
+            // 4. Redirect kembali dengan data 'receipt' untuk memicu Modal di Blade
+            return redirect()->back()->with([
+                'success' => 'Suara berhasil direkam!',
+                'receipt' => $receiptHash 
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log error jika perlu: \Log::error($e);
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem, silakan coba lagi.');
         }
     }
 
-    public function results(Election $election)
-    {
-        $results = $election->candidates()->withCount('votes')->get();
+    public function result($electionId)
+{
+    // 1. Ambil data pemilihan
+    $election = Election::findOrFail($electionId);
 
-        return response()->json($results);
-    }
+    // 2. Ambil kandidat beserta jumlah votenya KHUSUS di pemilihan ini
+    // Kita urutkan berdasarkan suara terbanyak (descending)
+    $candidates = \App\Models\Candidate::where('election_id', $electionId)
+        ->withCount(['votes' => function ($query) use ($electionId) {
+            $query->where('election_id', $electionId);
+        }])
+        ->orderBy('votes_count', 'desc')
+        ->get();
+
+    // 3. Hitung total seluruh suara masuk
+    $totalVotes = $candidates->sum('votes_count');
+
+    return view('landing.quickcount', compact('election', 'candidates', 'totalVotes'));
+}
 }

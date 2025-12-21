@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 // Import Controller Auth
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\PemilihanController;
 
 // Import Controller Admin
 use App\Http\Controllers\Admin\DashboardController;
@@ -23,10 +25,12 @@ use App\Http\Controllers\ProfileController;
 |--------------------------------------------------------------------------
 */
 
-// Redirect halaman awal ke login
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [UserController::class, 'index'])->name('index');
+Route::get('/pemilihan', [PemilihanController::class, 'index'])->name('pemilihan.index');
+Route::get('/pemilihan/{id}', [PemilihanController::class, 'show'])->name('pemilihan.show');
+Route::get('/about', [UserController::class, 'about'])->name('about');
+Route::get('/contact', [UserController::class, 'contact'])->name('contact');
+Route::get('/election/{id}/result', [VoteController::class, 'result'])->name('election.result');
 
 // ====================================================
 // 1. AUTHENTICATION ROUTES (Login & Logout)
@@ -97,3 +101,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/vote/{election}', [VoteController::class, 'store'])->name('vote.store');
+});
+

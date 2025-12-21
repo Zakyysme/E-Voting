@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="form-body mt-4">
-                            <form class="row g-3" method="POST" action="{{ route('register') }}">
+                            <form class="row g-3" method="POST" action="{{ route('register.process') }}">
                                 @csrf
 
                                 <div class="col-12">
@@ -77,40 +77,24 @@
                                 <div class="col-12">
                                     <label for="inputChoosePassword" class="form-label">Password</label>
                                     <div class="input-group" id="show_hide_password">
-                                        <input type="password" class="form-control border-end-0" name="password"
-                                            id="inputChoosePassword" placeholder="Enter Password" required>
-                                        <a href="javascript:;" class="input-group-text bg-transparent">
-                                            <i class="bi bi-eye-slash-fill"></i>
-                                        </a>
+                                        <input type="password" class="form-control" name="password" placeholder="Enter Password" required>
                                     </div>
+                                    @error('password')
+                                    <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
 
                                 <div class="col-12">
-                                    <label for="inputSelectCountry" class="form-label">Country</label>
-                                    <select class="form-select" name="country" id="inputSelectCountry" required>
-                                        <option value="India" selected>India</option>
-                                        <option value="United Kingdom">United Kingdom</option>
-                                        <option value="America">America</option>
-                                        <option value="Dubai">Dubai</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" name="terms" type="checkbox"
-                                            id="flexSwitchCheckChecked" required>
-                                        <label class="form-check-label" for="flexSwitchCheckChecked">
-                                            I read and agree to Terms & Conditions
-                                        </label>
+                                    <label for="inputConfirmPassword" class="form-label">Confirm Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" name="password_confirmation" id="inputConfirmPassword" placeholder="Confirm Password" required>
                                     </div>
                                 </div>
-
                                 <div class="col-12">
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-primary">Register</button>
                                     </div>
                                 </div>
-
                                 <div class="col-12">
                                     <div class="text-start">
                                         <p class="mb-0">
@@ -132,8 +116,8 @@
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 
     <script>
-        $(document).ready(function () {
-            $("#show_hide_password a").on('click', function (event) {
+        $(document).ready(function() {
+            $("#show_hide_password a").on('click', function(event) {
                 event.preventDefault();
                 let input = $('#show_hide_password input');
                 let icon = $('#show_hide_password i');
